@@ -58,7 +58,8 @@ Vagrant.configure(2) do |config|
     config.vm.provision "shell", path: "common-2-lustre_kernel.sh"
     config.vm.provision :reload
     config.vm.provision "shell", path: "master-1-lustre_fs.sh"
-    config.vm.provision "shell", path: "master-2-slurm_master.sh"
+    config.vm.provision "shell", path: "master-2-nfs_fs.sh"
+    config.vm.provision "shell", path: "master-3-slurm_master.sh"
 
   end
 
