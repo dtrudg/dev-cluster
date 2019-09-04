@@ -67,5 +67,7 @@ systemctl start slurmd
 sinfo
 
 # Mark node ready to rock
-scontrol update nodename=$(hostname) State=resume
+if ! grep "idle $(hostname)"; then
+    scontrol update nodename=$(hostname) State=resume
+fi
 
