@@ -34,7 +34,11 @@ yum -y install openssl openssl-devel pam-devel numactl numactl-devel hwloc hwloc
 cd /tmp
 wget https://download.schedmd.com/slurm/slurm-19.05.2.tar.bz2
 rpmbuild -tb slurm-19.05.2.tar.bz2
-yum install /root/rpmbuild/RPMS/x86_64/slurm*.rpm
+yum -y install /root/rpmbuild/RPMS/x86_64/slurm*.rpm
+
+# Copy slurm rpms to NFS for compute nodes to install
+mkdir -p /nfsdata/slurm-rpms
+cp /root/rpmbuild/RPMS/x86_64/slurm*.rpm /nfsdata/slurm-rpms/
 
 # Correct perms
 mkdir /var/spool/slurmctld

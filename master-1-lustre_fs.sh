@@ -25,7 +25,7 @@ lnetctl export > /etc/lnet.conf
 # Format the lustre volumes
 mkfs.lustre --reformat --fsname=lustre1 --mgs /dev/sdc
 mkfs.lustre --reformat --fsname=lustre1 --mgsnode=master@tcp0 --mdt --index=0 /dev/sdd
-mkfs.lustre --reformat --mgsnode=master@tcp0 --fsname=lustre --ost --index=0 /dev/sde
+mkfs.lustre --reformat --mgsnode=master@tcp0 --fsname=lustre1 --ost --index=0 /dev/sde
 
 # Setup mounts & mount them
 mkdir -p /mgs /mdt /ost
