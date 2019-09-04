@@ -33,7 +33,7 @@ exportfs -r
 
 # Mount the filesystem to our own host
 mkdir -p /nfs
-if ! grep -q "nfs" /etc/fstab; then
+if ! grep -q "master:nfsdata" /etc/fstab; then
     echo "master:/nfsdata        /nfs         nfs4  defaults,_netdev 0 0" >> /etc/fstab
 fi
 
