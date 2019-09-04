@@ -90,7 +90,7 @@ Vagrant.configure(2) do |config|
       v.cpus = 1
       v.customize ['modifyvm', :id, '--nictype1', 'virtio']
     end
-    compute02.vm.provision "shell", inline: "hostnamectl set-hostname compute01"
+    compute02.vm.provision "shell", inline: "hostnamectl set-hostname compute02"
     compute02.vm.provision "shell", path: "common-1-initial.sh"
     compute02.vm.provision "shell", path: "common-2-software.sh"
     compute02.vm.provision "shell", path: "compute-1-lustre_client.sh"
