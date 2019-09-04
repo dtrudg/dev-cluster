@@ -27,7 +27,7 @@ Vagrant.configure(2) do |config|
     mds01.vm.provider "virtualbox" do |vb|
       # 8 GB Volume for NFS
       if !File.exist?("nfs01.vdi")
-        vb.customize ["storagectl", :id, "--name", "SATA Controller", "--add", "sata" ]
+#        vb.customize ["storagectl", :id, "--name", "SATA Controller", "--add", "sata" ]
         vb.customize ["createhd", "--filename", "nfs01.vdi", "--size", 8192, "--variant", "Fixed"]
         vb.customize ["modifyhd", "nfs01.vdi", "--type", "shareable"]
       end
@@ -53,11 +53,12 @@ Vagrant.configure(2) do |config|
     end
 
     # Provisioning scripts
+    config.vm.probision "shell", inline: "hostnamectl set-hostname master"
     config.vm.provision "shell", path: "common-1-initial.sh"
-    config.vm.provision "shell", path: "master-1-lustre_kernel.sh"
+    config.vm.provision "shell", path: "common-2-lustre_kernel.sh"
     config.vm.provision :reload
-    config.vm.provision "shell", path: "master-2-lustre_fs.sh"
-    config.vm.provision "shell", path: "master-3-slurm_master.sh"
+    config.vm.provision "shell", path: "master-1-lustre_fs.sh"
+    config.vm.provision "shell", path: "master-2-slurm_master.sh"
 
   end
 
@@ -70,6 +71,11 @@ Vagrant.configure(2) do |config|
   #     v.cpus = 1
   #     v.customize ['modifyvm', :id, '--nictype1', 'virtio']
   #   end
+  #  config.vm.probision "shell", inline: "hostnamectl set-hostname compute01"
+  #  config.vm.provision "shell", path: "common-1-initial.sh"
+  #  config.vm.provision "shell", path: "common-2-lustre_kernel.sh"
+  #  config.vm.provision "shell", path: "compute-1-lustre_client.sh"
+  #  config.vm.provision "shell", path: "compute-2-slurm_client.sh"
   # end
 
   # # Compute node 2

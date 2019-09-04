@@ -1,8 +1,8 @@
 #!/bin/bash
 
-##############################################
-# Install Lustre Kernel and Basic Tools 
-##############################################
+################################################
+# Install Lustre Kernel Modules and Basic Tools
+################################################
 
 # Install modules into the now running lustre kernel
 yum -y --nogpgcheck --enablerepo=lustre-server install \
