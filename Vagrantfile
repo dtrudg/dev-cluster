@@ -64,7 +64,7 @@ Vagrant.configure(2) do |config|
   # Compute node 1
   config.vm.define "compute01" do |compute01|
     compute01.vm.box = "centos/7"
-    master.vm.synced_folder ".", "/vagrant", disabled: true
+    compute01.vm.synced_folder ".", "/vagrant", disabled: true
     compute01.vm.network "private_network", ip: "10.0.4.101", nic_type: "virtio"
     compute01.vm.provider "virtualbox" do |v|
       v.memory = 1024
