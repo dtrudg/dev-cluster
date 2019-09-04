@@ -1,8 +1,8 @@
 #!/bin/bash
 
-#####################################################
-# Install slurm master
-#####################################################
+##############################################################
+# Setup slurm client
+##############################################################
 
 # Setup users
 export MUNGEUSER=991
@@ -27,32 +27,13 @@ chmod 0700 /etc/munge/ /var/log/munge/
 systemctl enable munge
 systemctl start munge
 
-# Install Slurm deps
-yum -y install openssl openssl-devel pam-devel numactl numactl-devel hwloc hwloc-devel lua lua-devel readline-devel rrdtool-devel ncurses-devel man2html libibmad libibumad rpmbuild mariadb-devel
-
-# Install slurm
-cd /tmp
-wget https://download.schedmd.com/slurm/slurm-19.05.2.tar.bz2
-rpmbuild -tb slurm-19.05.2.tar.bz2
-yum -y install /root/rpmbuild/RPMS/x86_64/slurm*.rpm
-
-# Copy slurm rpms to NFS for compute nodes to install
-mkdir -p /nfsdata/slurm-rpms
-cp /root/rpmbuild/RPMS/x86_64/slurm*.rpm /nfsdata/slurm-rpms/
-
-# Correct perms
-mkdir /var/spool/slurmctld
-chown slurm: /var/spool/slurmctld
-chmod 755 /var/spool/slurmctld
-touch /var/log/slurmctld.log
-chown slurm: /var/log/slurmctld.log
-touch /var/log/slurm_jobacct.log /var/log/slurm_jobcomp.log
-chown slurm: /var/log/slurm_jobacct.log /var/log/slurm_jobcomp.log
+# Install slurm RPMs (built on master)
+yum -y install /nfs/slurm-rpms/slurm-*.rpm
 
 # Minimal slurm config
 cat <<EOF >> /etc/slurm/slurm.conf
 ControlMachine=master
-ControlAddr=10.0.4.1
+ControlAddr=10.0.4.100
 MpiDefault=none
 ProctrackType=proctrack/pgid
 ReturnToService=1
@@ -73,14 +54,18 @@ SlurmctldLogFile=/var/log/slurmctld.log
 SlurmdLogFile=/var/log/slurmd.log
 #
 # COMPUTE NODES
-NodeName=compute01 NodeAddr=10.0.4.2 CPUs=1 State=UNKNOWN
-NodeName=compute02 NodeAddr=10.0.4.3 CPUs=1 State=UNKNOWN
+NodeName=compute01 NodeAddr=10.0.4.101 CPUs=1 State=UNKNOWN
+NodeName=compute02 NodeAddr=10.0.4.102 CPUs=1 State=UNKNOWN
 PartitionName=super Nodes=compute0[1-2] Default=YES MaxTime=INFINITE State=UP
 EOF
 
 # Start slurm
-systemctl enable slurmctld
-systemctl start slurmctld
+systemctl enable slurmd
+systemctl start slurmd
 
 # Check sinfo works
 sinfo
+
+# Mark node ready to rock
+scontrol update nodename=$(hostname) State=resume
+

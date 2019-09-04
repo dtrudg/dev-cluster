@@ -56,3 +56,17 @@ fi
 if ! mountpoint -q /ost; then
     mount /ost
 fi
+
+# Mount the filesystem to our own host
+mkdir -p /lustre
+if ! grep -q "/lustre" /etc/fstab; then
+    echo "master@tcp0:/lustre1        /lustre         lustre  defaults_netdev 0 0" >> /etc/fstab
+fi
+
+if ! mountpoint -q /lustre; then
+    mount /lustre
+fi
+
+# Make perms wide open on it
+chmod 777 /lustre
+

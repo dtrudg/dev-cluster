@@ -31,3 +31,12 @@ systemctl enable nfs-server rpcbind
 echo "/nfsdata 10.0.4.0/24(rw,sync,no_root_squash)" > /etc/exports
 exportfs -r
 
+# Mount the filesystem to our own host
+mkdir -p /nfs
+if ! grep -q "nfs" /etc/fstab; then
+    echo "master:/nfsdata        /nfs         nfs4  defaults,_netdev 0 0" >> /etc/fstab
+fi
+
+if ! mountpoint -q /nfs; then
+    mount /nfs
+fi

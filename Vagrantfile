@@ -54,11 +54,12 @@ Vagrant.configure(2) do |config|
     # Provisioning scripts
     master.vm.provision "shell", inline: "hostnamectl set-hostname master"
     master.vm.provision "shell", path: "common-1-initial.sh"
-    master.vm.provision "shell", path: "common-2-lustre_kernel.sh"
+    master.vm.provision "shell", path: "common-2-software.sh"
+    master.vm.provision "shell", path: "master-1-lustre_kernel.sh"
     master.vm.provision :reload
-    master.vm.provision "shell", path: "master-1-lustre_fs.sh"
-    master.vm.provision "shell", path: "master-2-nfs_fs.sh"
-    master.vm.provision "shell", path: "master-3-slurm_master.sh"
+    master.vm.provision "shell", path: "master-2-lustre_fs.sh"
+    master.vm.provision "shell", path: "master-3-nfs_fs.sh"
+    master.vm.provision "shell", path: "master-4-slurm_master.sh"
   end
 
   # Compute node 1
@@ -73,11 +74,28 @@ Vagrant.configure(2) do |config|
     end
    compute01.vm.provision "shell", inline: "hostnamectl set-hostname compute01"
    compute01.vm.provision "shell", path: "common-1-initial.sh"
-   compute01.vm.provision "shell", path: "common-2-lustre_kernel.sh"
-   compute01.vm.provision :reload
+   compute01.vm.provision "shell", path: "common-2-software.sh"
    compute01.vm.provision "shell", path: "compute-1-lustre_client.sh"
-#   compute01.vm.provision "shell", path: "compute-2-nfs_client.sh"
-#   compute01.vm.provision "shell", path: "compute-3-slurm_client.sh"
+   compute01.vm.provision "shell", path: "compute-2-nfs_client.sh"
+   compute01.vm.provision "shell", path: "compute-3-slurm_client.sh"
+  end
+
+  # Compute node 2
+  config.vm.define "compute02" do |compute02|
+    compute02.vm.box = "centos/7"
+    compute02.vm.synced_folder ".", "/vagrant", disabled: true
+    compute02.vm.network "private_network", ip: "10.0.4.102", nic_type: "virtio"
+    compute02.vm.provider "virtualbox" do |v|
+      v.memory = 1024
+      v.cpus = 1
+      v.customize ['modifyvm', :id, '--nictype1', 'virtio']
+    end
+    compute02.vm.provision "shell", inline: "hostnamectl set-hostname compute01"
+    compute02.vm.provision "shell", path: "common-1-initial.sh"
+    compute02.vm.provision "shell", path: "common-2-software.sh"
+    compute02.vm.provision "shell", path: "compute-1-lustre_client.sh"
+    compute02.vm.provision "shell", path: "compute-2-nfs_client.sh"
+    compute02.vm.provision "shell", path: "compute-3-slurm_client.sh"
   end
 
 end
