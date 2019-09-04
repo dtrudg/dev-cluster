@@ -5,9 +5,11 @@
 ##############################################
 
 # Host resolution
-echo "10.0.4.1 master" >> /etc/hosts
-echo "10.0.4.2 compute01" >> /etc/hosts
-echo "10.0.4.3 compute02" >> /etc/hosts
+if ! grep -q "master" /etc/hosts; then
+    echo "10.0.4.100 master" >> /etc/hosts
+    echo "10.0.4.101 compute01" >> /etc/hosts
+    echo "10.0.4.102 compute02" >> /etc/hosts
+fi
 
 # Disable selinux and firewall
 setenforce 0

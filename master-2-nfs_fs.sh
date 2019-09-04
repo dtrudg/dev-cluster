@@ -5,12 +5,19 @@
 #####################################################
 
 # Format the volume for the nfs server
-mkfs.ext4 /dev/sdb
+if ! mountpoint -q /nfsdata; then
+  mkfs.ext4 /dev/sdb
+fi
 
 # Mount locally
 mkdir -p /nfsdata
-echo "/dev/sdb        /nfsdata        ext4       defaults     0  2" >> /etc/fstab
-mount /nfsdata
+if ! grep 'nfsdata' /etc/fstab; then
+    echo "/dev/sdb        /nfsdata        ext4       defaults     0  2" >> /etc/fstab
+fi
+
+if ! mountpoint -q /nfsdata; then
+    mount /nfsdata
+fi
 
 # Allow unrestricted perms
 chmod 777 /nfsdata

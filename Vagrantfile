@@ -16,9 +16,8 @@ Vagrant.configure(2) do |config|
   # Master will host SLURM, NFS, and Lustre
   config.vm.define "master" do |master|
     master.vm.box = "centos/7"
-    # installing lustre kernel removes virtualbox guest additions
     master.vm.synced_folder ".", "/vagrant", disabled: true
-    master.vm.network "private_network", ip: "10.0.4.1", nic_type: "virtio"
+    master.vm.network "private_network", ip: "10.0.4.100", nic_type: "virtio"
     master.vm.provider "virtualbox" do |v|
       v.memory = 2048  # lustre is greedy and segfaults with small RAM
       v.cpus = 2
@@ -65,7 +64,8 @@ Vagrant.configure(2) do |config|
   # Compute node 1
   config.vm.define "compute01" do |compute01|
     compute01.vm.box = "centos/7"
-    compute01.vm.network "private_network", ip: "10.0.4.2", nic_type: "virtio"
+    master.vm.synced_folder ".", "/vagrant", disabled: true
+    compute01.vm.network "private_network", ip: "10.0.4.101", nic_type: "virtio"
     compute01.vm.provider "virtualbox" do |v|
       v.memory = 1024
       v.cpus = 1
@@ -75,7 +75,7 @@ Vagrant.configure(2) do |config|
    compute01.vm.provision "shell", path: "common-1-initial.sh"
    compute01.vm.provision "shell", path: "common-2-lustre_kernel.sh"
    compute01.vm.provision :reload
-#   compute01.vm.provision "shell", path: "compute-1-lustre_client.sh"
+   compute01.vm.provision "shell", path: "compute-1-lustre_client.sh"
 #   compute01.vm.provision "shell", path: "compute-2-nfs_client.sh"
 #   compute01.vm.provision "shell", path: "compute-3-slurm_client.sh"
   end
